@@ -10,30 +10,26 @@ class agrupacion{
 private: 
 	//Mantenemos aqui los mismos atributos privados, ignorando aquellos que tengan que ver
 	//con el iterador
-	T datos[MAX];
+	class nodo{
+		nodo* next;
+		T data;
+	}
+	nodo* head;
+	nodo* tail;
 	int total;
 
 public:
 //	Ahora la funcion iniciar de la estructura es el constructor. 
-	agrupacion(): total (0)
-	    //TODO: Invoca a los constructores de los miembros privados (o deja
-		//que se construyan por defecto si lo consideras necesario).
-		//Separados por comas (si no sabes cómo hacerlo, mira cómo está hecho
-		//en la clase const_iterator)	
-		
-       	{  
-		//Si invocas a los constructores de los miembros privados no necesitas rellenar el código del constructor.
+	agrupacion() {
+		head = nullptr;
+		tail = nullptr;
+		total = 0;
 	}
 
 //	TODO: La funcion anyadir ahora es el metodo anyadir. Rellénalo. Para acceder a atributos
 //	y métodos de la propia clase, deberás hacerlo a través del puntero this->
 	bool anyadir(const T& p) {
-		bool sePuede = this -> total < MAX;
-		if (sePuede) {
-			this -> datos[ this -> total] = p;
-			this -> total++;
-		}
-		return sePuede;
+		
 	}
 
 //	TODO: La funcion borrarUltimo se transforma tambien en un metodo. Rellénalo.
