@@ -1,12 +1,14 @@
 #include "agrupacion-estatica.h"
 #include "agrupacion-dinamica.h"
 #include <iostream>
+using namespace std;
 
 //TODO: Define la cabecera de esta función mediante programacion generica para que sea equivalente
 //a declarar las dos funciones siguientes: 
 //void anyadir_elementos(agrupacion_estatica<int>& ag)
 //void anyadir_elementos(agrupacion_dinamica<int>& ag)
-{
+template <typename T> //se podria poner class en vez de typename (que es la versión moderna)
+void anyadir_elementos(T& ag){
 	ag.anyadir(42);
 	ag.anyadir(15);
 	ag.borrarUltimo();
@@ -17,7 +19,8 @@
 //a declarar las dos funciones siguientes: 
 //void mostrar_elementos(const agrupacion_estatica<int>& ag)
 //void mostrar_elementos(const agrupacion_dinamica<int>& ag)
-{
+template <typename T>
+void mostrar_elementos(T& ag){
 	for (int i : ag) std::cout<<i<<" ";
 	std::cout<<std::endl;
 }

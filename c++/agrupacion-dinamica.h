@@ -1,41 +1,64 @@
 #ifndef AGRUPACION_H
 #define AGRUPACION_H
-
-// Interfaz del TAD agrupación genérico. Pre-declaraciones:
-const int MAX = 40; //Límite tamaño de la agrupación, en esta implementación.
+#include <iostream>
+using namespace std;
+// Interfaz del TAD agrupación genérico. Pre-declaraciones:9
 
 template<typename T>
-class agrupacion{
+class agrupacion_dinamica{
 	
 private: 
 	//Mantenemos aqui los mismos atributos privados, ignorando aquellos que tengan que ver
 	//con el iterador
 	class nodo{
-		nodo* next;
-		T data;
-	}
-	nodo* head;
+		public:
+			nodo* ant;
+			T data;
+	};
 	nodo* tail;
 	int total;
 
 public:
 //	Ahora la funcion iniciar de la estructura es el constructor. 
-	agrupacion() {
-		head = nullptr;
+	agrupacion_dinamica() {
 		tail = nullptr;
 		total = 0;
 	}
 
+	~agrupacion_dinamica(){
+		nodo* aux = tail;
+		while(aux != nullptr){
+			nodo* aux2 = aux -> ant;
+			delete aux;
+			aux = aux2;
+		}
+	}
+
 //	TODO: La funcion anyadir ahora es el metodo anyadir. Rellénalo. Para acceder a atributos
 //	y métodos de la propia clase, deberás hacerlo a través del puntero this->
-	bool anyadir(const T& p) {
-		
+	void anyadir(const T& p) {
+		if (total == 0) {
+			tail = new nodo;
+			tail -> ant = nullptr;
+		}
+		else {
+			nodo* newtail = new nodo;
+			newtail -> ant = tail;
+			tail = newtail;
+		}
+		tail -> data = p;
+		total++;
 	}
 
 //	TODO: La funcion borrarUltimo se transforma tambien en un metodo. Rellénalo.
 	bool borrarUltimo() {
-		bool sePuede = this -> total > -1;
-		if (sePuede) this -> total--;
+		bool sePuede = total > 0;
+		if (sePuede) {
+			nodo* borrar = tail;
+			tail = tail -> ant;
+			total--;
+			delete borrar;
+		}
 		return sePuede;
 	}
 
@@ -48,11 +71,14 @@ public:
 	private:
 		//Al separar el iterador en una clase aparte, trasladamos los miembros privados que estaban
 		//en el struct a esta clase. Además, mantenemos una referencia a la agrupacion.
-		int i;
-		const agrupacion<T>& c;
+		const agrupacion_dinamica<T>& c; //puntero a alto nivel, es como si copias por valor, pero es solo un ptr
+		// este const de arriba impide modificar los elementos de la agrupación
+		nodo* iter;
 	public:
 		//Este constructor sirve como inicializador del iterador, tanto al principio como al final.
-		const_iterator(const agrupacion& c_, int i_) : i(i_), c(c_) {  }
+		const_iterator(const agrupacion_dinamica& c_, nodo* iter_): c(c_), iter(iter_){
+			//iter = *(c.tail); // puedes porqué c es una clase friend
+		}
 		
 	//	En la definición por defecto de los iteradores, se separa el avance del iterador
 	//	a la obtención del elemento apuntado por el iterador (que en la otra implementación ocurren
@@ -61,32 +87,24 @@ public:
 		//Este método redefine el operador de pre-incremento (++x).
 		//Representa el avance del iterador.
 		const_iterator& operator++() { 	
-			//TODO: Rellena este hueco para que el iterador sobre la agrupación avance. Recuerda
-			//que en nuestra definición de agrupación la estructura se recorre desde el último
-			//elemento introducido hasta el primero (como si se tratara de una pila).  
-			bool sepuede = i > -1;
-			if (sepuede) i--;
-			return (*this);
+			iter = (iter ->ant);
+			return *this;
 		}
 
 		//Este método redefine el operador de "apuntado" (*x)
 		//Representa la obtención de lo apuntado por el iterador.
 		const T& operator*()   const {
-			return (c.datos [i] );
-			//TODO: Rellena este método para que devuelva el elemento T al que está apuntando el iterador.	
+			return (iter -> data);
 		} 
 
 
 	//	En la definición por defecto de los iteradores, no existe la comprobación de si existe
-	//	siguiente elemento. Por defecto las estructuras de datos devuelven iteradores al principio y al final,
+	//	siguiente elemento. Por defecto las estructuras de datas devuelven iteradores al principio y al final,
 	//	y para recorrer la estructura se compara el iterador que avanza con el iterador que apunta al final
 	//	de la estructura.
 	//
 		bool operator!=(const const_iterator& that) const { 
-			if ( (that.i) != ( this -> i) ) return true;
-			else return false; 
-			//TODO: Rellenar este método para devuelva true si este iterador y el iterador "that" apuntan
-			//a sitios diferentes, y false en caso contrario. 
+			return ( (that.iter) != (this->iter) || ( &c != &(that.c)) );
 		}		
 
 	};
@@ -96,8 +114,9 @@ public:
 	//la comprobación de que "existe siguiente".
 	//Date cuenta que los valores que le pasamos como índice del iterador son para que se recorra la
 	//estructura desde el último elemento (this->total - 1) hasta el primero (0).
-	const_iterator begin() const { return const_iterator(*this,this->total - 1); }
-	const_iterator end()   const { return const_iterator(*this,-1); }
+	//begin y end llaman al constructor. Indican al bucle de recorrido dónde empezar y dónde acabar
+	const_iterator begin() const { return const_iterator(*this , tail); }
+	const_iterator end()   const { return const_iterator(*this, nullptr); }
 };
 
 #endif //fin de agrupacion.h

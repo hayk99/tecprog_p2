@@ -1,11 +1,11 @@
-#ifndef AGRUPACION_H
-#define AGRUPACION_H
+#ifndef AGRUPACION_STATIC_H
+#define AGRUPACION_STATIC_H
 
 // Interfaz del TAD agrupación genérico. Pre-declaraciones:
 const int MAX = 40; //Límite tamaño de la agrupación, en esta implementación.
 
 template<typename T>
-class agrupacion{
+class agrupacion_estatica{
 	
 private: 
 	//Mantenemos aqui los mismos atributos privados, ignorando aquellos que tengan que ver
@@ -15,7 +15,7 @@ private:
 
 public:
 //	Ahora la funcion iniciar de la estructura es el constructor. 
-	agrupacion(): total (0)
+	agrupacion_estatica(): total (0)
 	    //TODO: Invoca a los constructores de los miembros privados (o deja
 		//que se construyan por defecto si lo consideras necesario).
 		//Separados por comas (si no sabes cómo hacerlo, mira cómo está hecho
@@ -53,10 +53,10 @@ public:
 		//Al separar el iterador en una clase aparte, trasladamos los miembros privados que estaban
 		//en el struct a esta clase. Además, mantenemos una referencia a la agrupacion.
 		int i;
-		const agrupacion<T>& c;
+		const agrupacion_estatica<T>& c;
 	public:
 		//Este constructor sirve como inicializador del iterador, tanto al principio como al final.
-		const_iterator(const agrupacion& c_, int i_) : i(i_), c(c_) {  }
+		const_iterator(const agrupacion_estatica& c_, int i_) : i(i_), c(c_) {  }
 		
 	//	En la definición por defecto de los iteradores, se separa el avance del iterador
 	//	a la obtención del elemento apuntado por el iterador (que en la otra implementación ocurren
